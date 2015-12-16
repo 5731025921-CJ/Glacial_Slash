@@ -28,7 +28,7 @@ public class PlayerCharacter implements Renderable {
 	private int boundaryX, boundaryY, boundaryWidth, boundaryHeight;
 	private Image sprite = Resource.standSprite[1];
 	private int freezePlayerControlCount, airJumpCount;
-	private Thread walkAnimationThread = null, iceSummonAnimationThread = null;
+	private Thread walkAnimationThread = null, jumpAnimationThread = null, iceSummonAnimationThread = null;
 	
 	public PlayerCharacter() {
 		xSpeed = 0f;
@@ -139,8 +139,11 @@ public class PlayerCharacter implements Renderable {
 		else {
 			SoundEffectUtility.playSoundEffect(Resource.jumpSound);
 		}
-		Thread jumpAnimation = new Thread(new PlayerAnimation(Resource.jumpSprite, this, 6, false));
-		jumpAnimation.start();
+		try {
+			jumpAnimationThread.interrupt();
+		} catch (NullPointerException e) {}
+		jumpAnimationThread = new Thread(new PlayerAnimation(Resource.jumpSprite, this, 6, false));
+		jumpAnimationThread.start();
 
 		new Thread(new Runnable() {
 			@Override
@@ -150,8 +153,10 @@ public class PlayerCharacter implements Renderable {
 						Thread.yield();
 						Thread.sleep(1);
 					}
-				} catch (InterruptedException e) {}
-				jumpAnimation.interrupt();
+				} catch (InterruptedException e) {
+					return;
+				}
+				jumpAnimationThread.interrupt();
 			}
 		}).start();
 
