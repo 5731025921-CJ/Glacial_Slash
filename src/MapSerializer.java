@@ -19,7 +19,7 @@ public class MapSerializer {
 	}
 
 	private static void serializeMap(String mapName) {
-		File mapFile = new File(mapName + ".glm");
+		File mapFile = new File("src/res/map/" + mapName + ".glm");
 		try (FileOutputStream fileOut = new FileOutputStream(mapFile)) {
 			if (!mapFile.exists())
 				mapFile.createNewFile();

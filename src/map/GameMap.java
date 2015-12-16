@@ -45,15 +45,14 @@ public class GameMap implements Renderable, Serializable {
 	}
 	
 	public static GameMap getGameMap(String mapName) {
-		// Used with MapSerializer
 		/*
+		// Use with MapSerializer
 		if ("tutorial".equalsIgnoreCase(mapName)) return new TutorialMap();
 		else if ("easy".equalsIgnoreCase(mapName)) return new GameMap(Resource.easyMap);
 		else if ("normal".equalsIgnoreCase(mapName)) return new GameMap(Resource.normalMap);
 		else if ("hard".equalsIgnoreCase(mapName)) return new GameMap(Resource.hardMap);
 		else if ("final".equalsIgnoreCase(mapName)) return new FinalMap();
 		*/
-		
 		if ("tutorial".equalsIgnoreCase(mapName)) return readGameMap(Resource.tutorialMap);
 		else if ("easy".equalsIgnoreCase(mapName)) return readGameMap(Resource.easyMap);
 		else if ("normal".equalsIgnoreCase(mapName)) return readGameMap(Resource.normalMap);

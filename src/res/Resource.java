@@ -138,8 +138,8 @@ public class Resource {
 		yourManaContent = readImage(loader.getResource("res/map/content/yourmana.png"));
 
 		// load map
-		// Used with MapSerializer
 		/*
+		// Use with MapSerializer
 		tutorialMap = loader.getResourceAsStream("res/map/tutorial.txt");
 		easyMap = loader.getResourceAsStream("res/map/easy.txt");
 		normalMap = loader.getResourceAsStream("res/map/normal.txt");
