@@ -73,20 +73,25 @@ public class PlayerStatus implements Renderable, Serializable {
 		player.getPlayerCharacter().setFacingDirection(player.originalFacingDirection);
 	}
 	
-	public synchronized void savePlayer() {
-		lastCheckPointPosition.setLocation(playerCharacter.getX(), playerCharacter.getY() + Resource.standSprite[0].getHeight());
-		originalFacingDirection = playerCharacter.getFacingDirection();
-		try (FileOutputStream fileOut = new FileOutputStream(saveLocation)){
-			try (ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
-				out.writeObject(player);
-			} catch (IOException e) {
-				JOptionPane.showMessageDialog(null, "Unable to save the game", "Error", JOptionPane.ERROR_MESSAGE);
+	public void savePlayer() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				lastCheckPointPosition.setLocation(playerCharacter.getX(), playerCharacter.getY() + Resource.standSprite[0].getHeight());
+				originalFacingDirection = playerCharacter.getFacingDirection();
+				try (FileOutputStream fileOut = new FileOutputStream(saveLocation)){
+					try (ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
+						out.writeObject(player);
+					} catch (IOException e) {
+						JOptionPane.showMessageDialog(null, "Unable to save the game", "Error", JOptionPane.ERROR_MESSAGE);
+					}
+				} catch (FileNotFoundException e1) {
+					JOptionPane.showMessageDialog(null, "File is not found", "Error", JOptionPane.ERROR_MESSAGE);
+				} catch (IOException e2) {
+					JOptionPane.showMessageDialog(null, "Unable to save the game", "Error", JOptionPane.ERROR_MESSAGE);
+				}
 			}
-		} catch (FileNotFoundException e1) {
-			JOptionPane.showMessageDialog(null, "File is not found", "Error", JOptionPane.ERROR_MESSAGE);
-		} catch (IOException e2) {
-			JOptionPane.showMessageDialog(null, "Unable to save the game", "Error", JOptionPane.ERROR_MESSAGE);
-		}
+		}).start();
 	}
 	
 	public static synchronized PlayerStatus getPlayer() {
