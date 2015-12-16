@@ -2,6 +2,8 @@ package player;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.Collections;
+import java.util.List;
 
 import exception.SkillCardUnusableException;
 import res.Resource;
@@ -19,6 +21,7 @@ public class Concentration extends SkillCard {
 
 	@Override
 	public void activate() throws SkillCardUnusableException {
+		List<SkillCard> hand = PlayerStatus.getPlayer().getHand();
 		playActivateAnimation();
 		new Thread(new Runnable() {
 
@@ -30,7 +33,12 @@ public class Concentration extends SkillCard {
 					return;
 				}
 				for (SkillCard s : drawnCards) {
-					PlayerStatus.getPlayer().addCard(s);
+					synchronized (hand) {
+						hand.add(s);
+					}
+				}
+				synchronized (hand) {
+					Collections.sort(hand);
 				}
 			}
 		}).start();

@@ -25,7 +25,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 
 import render.Renderable;
 import res.Resource;
@@ -121,13 +120,10 @@ public class PlayerStatus implements Renderable, Serializable {
 		currentMana = maxMana;
 	}
 	
-	protected void addCard(SkillCard skillCard) {
-		synchronized (hand) {
-			hand.add(skillCard);
-			Collections.sort(hand);
-		}
+	protected List<SkillCard> getHand() {
+		return hand;
 	}
-	
+
 	protected void useCard(SkillCard used) throws SkillCardUnusableException {
 		SkillCard using;
 		try {
