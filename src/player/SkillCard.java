@@ -20,6 +20,7 @@ public abstract class SkillCard implements Comparable<SkillCard>, Serializable {
 
 	public static final SkillCard SKY_UPPERCUT = new SkyUppercut(), DOUBLE_JUMP = new DoubleJump(), GLACIAL_DRIFT = new GlacialDrift(), ICE_SUMMON = new IceSummon(), CONCENTRATION = new Concentration(null);
 	public static final int CARD_IMAGE_WIDTH = 120, CARD_IMAGE_HEIGHT = 180;
+	protected boolean isBeingUsed;
 	protected int cost;
 	protected transient Image cardImage;
 	protected transient Image originalCardImage;
@@ -31,6 +32,7 @@ public abstract class SkillCard implements Comparable<SkillCard>, Serializable {
 		this.cost = cost;
 		this.cardImage = cardImage;
 		this.originalCardImage = cardImage;
+		this.isBeingUsed = false;
 	}
 	
 	public static final SkillCard createSkillCard(String name) {
@@ -53,6 +55,7 @@ public abstract class SkillCard implements Comparable<SkillCard>, Serializable {
 	}
 	
 	protected void playActivateAnimation() {
+		this.isBeingUsed = true;
 		SoundEffectUtility.playSoundEffect(Resource.cardSound);
 		activateAnimationThread = new Thread(new Animation(Resource.cardAnimation, 2) {
 			
@@ -116,8 +119,9 @@ public abstract class SkillCard implements Comparable<SkillCard>, Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		SkillCard other = (SkillCard) obj;
-		return this.getClass().getSimpleName().equals(other.getClass().getSimpleName());
+		if (isBeingUsed != ((SkillCard)obj).isBeingUsed)
+			return false;
+		return true;
 	}
 
 }
