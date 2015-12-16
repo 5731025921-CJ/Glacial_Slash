@@ -47,16 +47,7 @@ public class TitleScreen extends JComponent {
 					JOptionPane.showMessageDialog(null, "Choose save file location\nFile name will automatically be appended with \".gls\"", "New game", JOptionPane.PLAIN_MESSAGE);
 					JFileChooser fileChooser = new JFileChooser();
 					if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-						File saveFile = fileChooser.getSelectedFile();
-						String filePath = saveFile.getPath();
-						String extension = "";
-						int lastDot = filePath.lastIndexOf(".");
-						if (lastDot >= 0)
-							extension = filePath.substring(lastDot+1);
-						if (!"gls".equalsIgnoreCase(extension)) {
-							saveFile = new File(saveFile.toString() + ".gls");
-						}
-						PlayerStatus.newPlayer(saveFile.getPath());
+						PlayerStatus.newPlayer(appendGLS(fileChooser.getSelectedFile()).getPath());
 						synchronized (TitleWindow.getWindow()) {
 							TitleWindow.getWindow().notifyAll();
 						}
@@ -67,7 +58,7 @@ public class TitleScreen extends JComponent {
 					fileChooser.setFileFilter(new FileNameExtensionFilter("Glacial Slash save", "gls"));
 					if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 						try {
-							PlayerStatus.loadPlayer(fileChooser.getSelectedFile().getPath());
+							PlayerStatus.loadPlayer(appendGLS(fileChooser.getSelectedFile()).getPath());
 						} catch (UnableToLoadGameException e1) {
 							return;
 						}
@@ -91,6 +82,18 @@ public class TitleScreen extends JComponent {
 		g2d.drawImage(Resource.startButton, null, 120, 400);
 		g2d.drawImage(Resource.loadButton, null, 540, 400);
 		g2d.drawImage(Resource.exitButton, null, 960, 400);
+	}
+	
+	private static File appendGLS(File f) {
+		String filePath = f.getPath();
+		String extension = "";
+		int lastDot = filePath.lastIndexOf(".");
+		if (lastDot >= 0)
+			extension = filePath.substring(lastDot+1);
+		if (!"gls".equalsIgnoreCase(extension))
+			return new File(f.toString() + ".gls");
+		else
+			return f;
 	}
 
 }
