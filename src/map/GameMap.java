@@ -32,15 +32,11 @@ public class GameMap implements Renderable, Serializable {
 	protected ManaSource[] manaSources;
 	protected Point initialPosition, transitionPoint;
 	protected String nextMapName;
+	protected boolean isManaSourceSaving;
 	
 	private static GameMap readGameMap(InputStream in) {
 		try (ObjectInputStream serialIn = new ObjectInputStream(in)) {
-			if (in == Resource.tutorialMap)
-				return (TutorialMap)serialIn.readObject();
-			else if (in == Resource.finalMap)
-				return (FinalMap)serialIn.readObject();
-			else
-				return (GameMap)serialIn.readObject();
+			return (GameMap)serialIn.readObject();
 		} catch (IOException e) {
 			return null;
 		} catch (ClassNotFoundException e) {
@@ -49,18 +45,21 @@ public class GameMap implements Renderable, Serializable {
 	}
 	
 	public static GameMap getGameMap(String mapName) {
-		/* Used with MapSerializer
+		// Used with MapSerializer
+		/*
 		if ("tutorial".equalsIgnoreCase(mapName)) return new TutorialMap();
 		else if ("easy".equalsIgnoreCase(mapName)) return new GameMap(Resource.easyMap);
 		else if ("normal".equalsIgnoreCase(mapName)) return new GameMap(Resource.normalMap);
 		else if ("hard".equalsIgnoreCase(mapName)) return new GameMap(Resource.hardMap);
 		else if ("final".equalsIgnoreCase(mapName)) return new FinalMap();
 		*/
+		
 		if ("tutorial".equalsIgnoreCase(mapName)) return readGameMap(Resource.tutorialMap);
 		else if ("easy".equalsIgnoreCase(mapName)) return readGameMap(Resource.easyMap);
 		else if ("normal".equalsIgnoreCase(mapName)) return readGameMap(Resource.normalMap);
 		else if ("hard".equalsIgnoreCase(mapName)) return readGameMap(Resource.hardMap);
 		else if ("final".equalsIgnoreCase(mapName)) return readGameMap(Resource.finalMap);
+		
 		else return null;
 	}
 
@@ -91,6 +90,11 @@ public class GameMap implements Renderable, Serializable {
 					tileMap[tileX][tileY] = Tile.AIR;
 			}
 		}
+		
+		if ("save".equalsIgnoreCase(fileScanner.nextLine()))
+			isManaSourceSaving = true;
+		else
+			isManaSourceSaving = false;
 			
 		int checkpointCount = Integer.parseInt(fileScanner.nextLine());
 		manaSources = new ManaSource[checkpointCount];
@@ -226,7 +230,7 @@ public class GameMap implements Renderable, Serializable {
 				if (!s.isUsed()) {
 					SoundEffectUtility.playSoundEffect(Resource.checkPointSound);
 					PlayerStatus.getPlayer().drawNewHand(s.drawCard());
-					if (!(this instanceof FinalMap))
+					if (isManaSourceSaving)
 						PlayerStatus.getPlayer().savePlayer();
 				}
 			}
